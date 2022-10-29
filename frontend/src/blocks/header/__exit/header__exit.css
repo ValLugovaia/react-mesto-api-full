@@ -1,0 +1,12 @@
+.header__exit {
+    margin: 0 0 20px 24px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: right;
+    color: #A9A9A9;
+    background: none;
+    cursor: pointer;
+}

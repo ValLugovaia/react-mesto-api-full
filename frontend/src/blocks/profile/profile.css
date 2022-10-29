@@ -1,0 +1,19 @@
+.profile {
+    margin: 0 auto 36px;
+    display: flex;
+    flex-direction: column;
+    max-width: 282px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+@media screen and (min-width: 1024px) {
+    .profile {
+        margin: 0 auto 51px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 880px;
+    }
+}

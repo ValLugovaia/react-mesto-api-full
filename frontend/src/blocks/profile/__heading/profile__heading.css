@@ -1,0 +1,12 @@
+.profile__heading {
+    position: relative;
+    margin: 0 auto 14px;
+    width: 189px;
+}
+
+@media screen and (min-width: 1024px) {
+    .profile__heading {
+        margin: 0 auto 16px;
+        width: 336px;
+    }
+}

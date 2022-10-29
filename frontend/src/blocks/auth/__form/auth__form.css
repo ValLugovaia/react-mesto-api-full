@@ -1,0 +1,10 @@
+.auth__form {
+    display: flex;
+    flex-direction: column;
+    padding-top: 36px;
+    padding-left: 18px;
+    padding-right: 35px;
+    padding-bottom: 35px;
+    border-radius: 10px;
+    position: relative;
+}
