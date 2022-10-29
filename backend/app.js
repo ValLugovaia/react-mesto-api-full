@@ -10,12 +10,15 @@ const cookieParser = require('cookie-parser');
 const routes = require('./routes');
 const { error } = require('./middlewares/error');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const cors = require('./middlewares/cors');
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
+
+app.use(cors);
 
 app.use(helmet());
 app.use(cookieParser());
