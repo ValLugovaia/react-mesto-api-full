@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://auth.nomoreparties.co';
+export const BASE_URL = 'https://backend.vaal-project.nomoredomains.icu';
 
 function handleResponse(res) {
   return (res.ok) ? (res.json()) : (Promise.reject(`Ошибка: ${res.status}`))
