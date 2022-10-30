@@ -146,13 +146,13 @@ function App() {
   function onLogin(email, password) {
     return authorize(email, password)
       .then((res) => {
-        console.log(res);
-        if (res.token) {
-          localStorage.setItem("jwt", res.token);
-          setUserData({ email });
-          setLoggedIn(true);
+        if (res.email) {
+          localStorage.setItem("email", res.email);
+          tokenCheck();
         }
-      })
+        tokenCheck();
+        }
+      )
       .catch(err => {
         console.log(err);
         setIsInfoTooltipPopup(true);
@@ -160,21 +160,17 @@ function App() {
   }
 
   function onSignOut() {
-    localStorage.removeItem("jwt");
+    localStorage.removeItem("email");
     setUserData({ _id: "", email: "" });
     setLoggedIn(false);
     history.push("/sign-in");
   }
 
   function tokenCheck() {
-    const cookie = localStorage.getItem('hasCookie');
-    if (cookie) {
-      auth.getContent().then(res => {
-        if (res) {
-          const { _id, email } = res.data;
-          setUserData({ _id, email });
-          setLoggedIn(true);
-        }
+    if (localStorage.getItem("email")) {
+      auth.getContent().then((res) => {
+        setUserData(res.email);
+        setLoggedIn(true);
       })
       .catch(err => {
         console.log(err)
