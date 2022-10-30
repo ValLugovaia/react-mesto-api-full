@@ -167,13 +167,14 @@ function App() {
   }
 
   function tokenCheck() {
-  if (localStorage.getItem("jwt")) {
-    const jwt = localStorage.getItem("jwt");
-    auth.getContent(jwt).then((res) => {
-        const { _id, email } = res.data;
-        console.log("res.data", res.data);
-        setUserData({ _id, email });
-        setLoggedIn(true);
+    const cookie = localStorage.getItem('hasCookie');
+    if (cookie) {
+      auth.getContent().then(res => {
+        if (res) {
+          const { _id, email } = res.data;
+          setUserData({ _id, email });
+          setLoggedIn(true);
+        }
       })
       .catch(err => {
         console.log(err)

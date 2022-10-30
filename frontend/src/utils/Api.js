@@ -10,7 +10,7 @@ class Api {
 
   getUserInfo() {
     return fetch(`${this._baseUrl}/users/me`, {
-      headers: this._headers
+      credentials: 'include',
     })
     .then(this._handleResponse)
   }
@@ -40,7 +40,7 @@ class Api {
 
   getInitialCards() {
     return fetch(`${this._baseUrl}/cards`, {
-      headers: this._headers
+      credentials: 'include',
     })
     .then(this._handleResponse)
   }
@@ -49,6 +49,7 @@ class Api {
     return fetch(`${this._baseUrl}/cards`, {
       method: "POST",
       headers: this._headers,
+      credentials: 'include',
       body: JSON.stringify(data)
     })
     .then(this._handleResponse)
