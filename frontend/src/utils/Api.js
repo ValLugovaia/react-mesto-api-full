@@ -74,9 +74,8 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-42',
+  baseUrl: 'https://backend.vaal-project.nomoredomains.icu',
   headers: {
-    authorization: '55e9d13b-b2e4-4190-948b-7d1e9efb302f',
     'Content-Type': 'application/json'
   }
 });
