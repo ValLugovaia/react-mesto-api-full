@@ -10,7 +10,6 @@ export const register = (email, password) => {
     headers: {
       'Content-Type': 'application/json'
     },
-    credentials: 'include',
     body: JSON.stringify({email, password})
 })
   .then(res => handleResponse(res));
@@ -28,7 +27,19 @@ export const authorize = (email, password) => {
     .then(res => handleResponse(res));
 };
 
-export const getContent = () => {
+export const logout = (email) => {
+  return fetch(`${BASE_URL}/signout`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify({email})
+})
+  .then(res => handleResponse(res));
+};
+
+export const getContent = (token) => {
     return fetch(`${BASE_URL}/users/me`, {
       method: 'GET',
       headers: {

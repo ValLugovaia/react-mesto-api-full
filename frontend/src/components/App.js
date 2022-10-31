@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import api from '../utils/Api.js';
-import { register, authorize } from '../utils/Auth.js';
+import { register, authorize, logout } from '../utils/Auth.js';
 import * as auth from '../utils/Auth.js';
 import Header from './Header.js';
 import Main from './Main.js';
@@ -130,10 +130,13 @@ function App() {
   function onRegister(email, password) {
     return register(email, password)
       .then((res) => {
-        if (res.data._id) {
+        if (res._id) {
           setIsSignup(true);
           setIsInfoTooltipPopup(true);
           history.push("/sign-in");
+        } else {
+          setIsSignup(false);
+          setIsInfoTooltipPopup(true);
         }
       })
       .catch(err => {
@@ -155,15 +158,22 @@ function App() {
       )
       .catch(err => {
         console.log(err);
+        setIsSignup(false);
         setIsInfoTooltipPopup(true);
       });
   }
 
   function onSignOut() {
-    localStorage.removeItem("email");
-    setUserData({ _id: "", email: "" });
-    setLoggedIn(false);
-    history.push("/sign-in");
+    return logout()
+      .then(() => {
+        localStorage.removeItem("email");
+        setUserData({ _id: "", email: "" });
+        setLoggedIn(false);
+        history.push("/sign-in");
+      })
+      .catch(err => {
+        console.log(err)
+      });
   }
 
   function tokenCheck() {
@@ -190,7 +200,7 @@ function App() {
           <Route path="/sign-in">
             <Login onLogin={onLogin} />
           </Route>
-          <Route path="/">{loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}</Route>
+          <Route>{loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}</Route>
         </Switch>
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
         <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
