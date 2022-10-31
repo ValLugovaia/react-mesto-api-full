@@ -31,7 +31,8 @@ function App() {
   const [currentUser, setCurrentUser] = useState({});
 
   useEffect(() => {
-    if (loggedIn) {  
+    const cookie = localStorage.getItem('hasCookie');
+    if (cookie) {  
       Promise.all([api.getUserInfo(), api.getInitialCards()])
         .then(([data, cards]) => {
           setCurrentUser(data);
@@ -41,11 +42,11 @@ function App() {
           console.log(err)
         });
     }
-  }, [loggedIn]);
+  }, []);
 
   useEffect(() => {
     tokenCheck();
-  }, []);
+  }, [loggedIn]);
 
   useEffect(() => {
     if (loggedIn) {
@@ -129,15 +130,9 @@ function App() {
 
   function onRegister(email, password) {
     return register(email, password)
-      .then((res) => {
-        if (res._id) {
-          setIsSignup(true);
-          setIsInfoTooltipPopup(true);
-          history.push("/sign-in");
-        } else {
-          setIsSignup(false);
-          setIsInfoTooltipPopup(true);
-        }
+      .then(() => {
+        setIsSignup(true);
+        setIsInfoTooltipPopup(true);
       })
       .catch(err => {
         console.log(err);
@@ -148,17 +143,15 @@ function App() {
 
   function onLogin(email, password) {
     return authorize(email, password)
-      .then((res) => {
-        if (res.email) {
-          localStorage.setItem("email", res.email);
-          tokenCheck();
-        }
-        tokenCheck();
-        }
-      )
+      .then(([data, cards]) => {
+        setLoggedIn(true);
+        localStorage.setItem('hasCookie', true);
+        setCurrentUser(data);
+        setCards(cards);
+      })
       .catch(err => {
         console.log(err);
-        setIsSignup(false);
+        setLoggedIn(false);
         setIsInfoTooltipPopup(true);
       });
   }
@@ -166,7 +159,7 @@ function App() {
   function onSignOut() {
     return logout()
       .then(() => {
-        localStorage.removeItem("email");
+        localStorage.removeItem('hasCookie');
         setUserData({ _id: "", email: "" });
         setLoggedIn(false);
         history.push("/sign-in");
@@ -177,7 +170,8 @@ function App() {
   }
 
   function tokenCheck() {
-    if (localStorage.getItem("email")) {
+    const cookie = localStorage.getItem('hasCookie');
+    if (cookie) {
       auth.getContent().then((res) => {
         setUserData(res.email);
         setLoggedIn(true);
