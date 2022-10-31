@@ -13,7 +13,6 @@ import EditProfilePopup from './EditProfilePopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
 import Register from './Register.js';
 import Login from './Login.js';
-import ProtectedRoute from './ProtectedRoute.js';
 import InfoTooltip from './InfoTooltip.js';
 
 function App() {
@@ -187,7 +186,7 @@ function App() {
       <div className="root">
         <Header userEmail={userData.email} onSignOut={onSignOut} />
         <Switch>
-          <ProtectedRoute exact path="/" loggedIn={loggedIn} component={Main} cards={cards} onEditAvatar={handleEditAvatarClick} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onCardClick={handleCardClick} onCardLike={handleCardLike} onCardDelete={handleCardDelete} />
+          <Route exact path="/" component={Main} cards={cards} onEditAvatar={handleEditAvatarClick} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onCardClick={handleCardClick} onCardLike={handleCardLike} onCardDelete={handleCardDelete} />
           <Route path="/sign-up">
             <Register onRegister={onRegister} />
           </Route>
