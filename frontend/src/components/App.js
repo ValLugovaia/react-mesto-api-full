@@ -194,7 +194,6 @@ function App() {
           <Route path="/sign-in">
             <Login onLogin={onLogin} />
           </Route>
-          <Route>{loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}</Route>
         </Switch>
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
         <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
