@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import api from '../utils/Api.js';
-import { register, authorize, logout } from '../utils/Auth.js';
+import { register, authorize } from '../utils/Auth.js';
 import * as auth from '../utils/Auth.js';
 import Header from './Header.js';
 import Main from './Main.js';
@@ -13,9 +13,11 @@ import EditProfilePopup from './EditProfilePopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
 import Register from './Register.js';
 import Login from './Login.js';
+import ProtectedRoute from './ProtectedRoute.js';
 import InfoTooltip from './InfoTooltip.js';
 
 function App() {
+  const history = useHistory();
   const [isEditAvatarPopupOpen, setEditAvatarPopup] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopup] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopup] = useState(false);
@@ -25,13 +27,10 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const [userData, setUserData] = useState({ _id: '', email: '' });
-  const history = useHistory();
-
   const [currentUser, setCurrentUser] = useState({});
 
   useEffect(() => {
-    const cookie = localStorage.getItem('hasCookie');
-    if (cookie) {  
+    if (loggedIn) {  
       Promise.all([api.getUserInfo(), api.getInitialCards()])
         .then(([data, cards]) => {
           setCurrentUser(data);
@@ -41,11 +40,11 @@ function App() {
           console.log(err)
         });
     }
-  }, []);
+  }, [loggedIn]);
 
   useEffect(() => {
     tokenCheck();
-  }, [loggedIn]);
+  }, []);
 
   useEffect(() => {
     if (loggedIn) {
@@ -129,9 +128,12 @@ function App() {
 
   function onRegister(email, password) {
     return register(email, password)
-      .then(() => {
-        setIsSignup(true);
-        setIsInfoTooltipPopup(true);
+      .then((res) => {
+        if (res.data._id) {
+          setIsSignup(true);
+          setIsInfoTooltipPopup(true);
+          history.push("/sign-in");
+        }
       })
       .catch(err => {
         console.log(err);
@@ -142,37 +144,33 @@ function App() {
 
   function onLogin(email, password) {
     return authorize(email, password)
-      .then(([data, cards]) => {
-        setLoggedIn(true);
-        localStorage.setItem('hasCookie', true);
-        setCurrentUser(data);
-        setCards(cards);
+      .then((res) => {
+        console.log(res.token);
+        if (res.token) {
+          localStorage.setItem('token', res.token);
+          setUserData({ email });
+          setLoggedIn(true);
+          tokenCheck();
+        }
+        tokenCheck();
       })
       .catch(err => {
         console.log(err);
-        setLoggedIn(false);
         setIsInfoTooltipPopup(true);
       });
   }
 
   function onSignOut() {
-    return logout()
-      .then(() => {
-        localStorage.removeItem('hasCookie');
-        setUserData({ _id: "", email: "" });
-        setLoggedIn(false);
-        history.push("/sign-in");
-      })
-      .catch(err => {
-        console.log(err)
-      });
+    localStorage.removeItem("token");
+    setUserData({ _id: "", email: "" });
+    setLoggedIn(false);
+    history.push("/sign-in");
   }
 
   function tokenCheck() {
-    const cookie = localStorage.getItem('hasCookie');
-    if (cookie) {
-      auth.getContent().then((res) => {
-        setUserData(res.email);
+  if (localStorage.getItem("token")) {
+    auth.getContent().then((res) => {
+        setUserData(res.token);
         setLoggedIn(true);
       })
       .catch(err => {
@@ -186,13 +184,14 @@ function App() {
       <div className="root">
         <Header userEmail={userData.email} onSignOut={onSignOut} />
         <Switch>
-          <Route exact path="/" component={Main} cards={cards} onEditAvatar={handleEditAvatarClick} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onCardClick={handleCardClick} onCardLike={handleCardLike} onCardDelete={handleCardDelete} />
+          <ProtectedRoute exact path="/" loggedIn={loggedIn} component={Main} cards={cards} onEditAvatar={handleEditAvatarClick} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onCardClick={handleCardClick} onCardLike={handleCardLike} onCardDelete={handleCardDelete} />
           <Route path="/sign-up">
             <Register onRegister={onRegister} />
           </Route>
           <Route path="/sign-in">
             <Login onLogin={onLogin} />
           </Route>
+          <Route>{loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}</Route>
         </Switch>
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
         <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
