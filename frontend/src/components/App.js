@@ -31,12 +31,11 @@ function App() {
 
   function onRegister(email, password) {
     return register(email, password)
-      .then((res) => {
-        if (res.data._id) {
-          setIsSignup(true);
-          setIsInfoTooltipPopup(true);
-          history.push("/sign-in");
-        }
+      .then((data) => {
+        setIsSignup(true);
+        setEmail(data.email);
+        setIsInfoTooltipPopup(true);
+        history.push("/sign-in");
       })
       .catch(err => {
         console.log(err);
