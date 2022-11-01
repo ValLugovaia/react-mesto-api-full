@@ -23,7 +23,9 @@ _injectToken(headers) {
 
   getUserInfo() {
     return fetch(`${this._baseUrl}/users/me`, {
-      headers: this._headers
+      method: "GET",
+      headers: this._injectToken(this._headers),
+      credentials: 'include',
     })
     .then(this._handleResponse)
   }
@@ -51,7 +53,9 @@ _injectToken(headers) {
 
   getInitialCards() {
     return fetch(`${this._baseUrl}/cards`, {
-      headers: this._headers
+      method: "GET",
+      headers: this._injectToken(this._headers),
+      credentials: 'include',
     })
     .then(this._handleResponse)
   }
