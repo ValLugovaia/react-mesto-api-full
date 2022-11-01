@@ -146,8 +146,8 @@ function App() {
     return authorize(email, password)
     .then((res) => {
       console.log(res);
-      if (res.email) {
-        localStorage.setItem("email", res.email);
+      if (res.token) {
+        localStorage.setItem('token', res.token);
         tokenCheck();
       }
       tokenCheck();
@@ -161,7 +161,7 @@ function App() {
   function onSignOut() {
     return logout()
         .then(() => {
-          localStorage.removeItem("email");
+          localStorage.removeItem('token');
           setUserData('');
           setLoggedIn(false);
           history.push("/sign-in");
@@ -172,7 +172,7 @@ function App() {
   }
 
   function tokenCheck() {
-    if (localStorage.getItem("email")) {
+    if (localStorage.getItem('token')) {
       getContent()
         .then((res) => {
           setUserData(res.email);
