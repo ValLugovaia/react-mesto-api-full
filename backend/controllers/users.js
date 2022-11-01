@@ -91,7 +91,7 @@ module.exports.updateUserInfo = (req, res, next) => {
     .orFail(() => {
       throw new NotFound('Пользователь не найден');
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({ name: user.name, about: user.about }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при обновлении профиля'));
