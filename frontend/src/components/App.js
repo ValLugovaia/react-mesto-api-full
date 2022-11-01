@@ -51,7 +51,7 @@ function App() {
       console.log(res);
       if (res) {
         localStorage.setItem('jwt', res.token);
-        setUserData(res.email);
+        setUserData({ email });
         setLoggedIn(true);
         history.replace({ pathname: "/" });
       }
@@ -80,7 +80,8 @@ function App() {
     if (token) {
       getContent(token)
         .then((res) => {
-          setUserData(res.email);
+          const { _id, email } = res.data;
+          setUserData({ _id, email });
           setLoggedIn(true);
           history.push("/");
         })
@@ -92,9 +93,10 @@ function App() {
 
   useEffect(() => {
     if (loggedIn) {
-      Promise.all([api.getProfile(), api.getInitialCards()])
-        .then(([info, cards]) => {
-          setCurrentUser(info);
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
+        .then(([data, cards]) => {
+          console.log(cards);
+          setCurrentUser(data);
           setCards(cards);
         })
         .catch((err) => {
