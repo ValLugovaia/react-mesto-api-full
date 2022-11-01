@@ -38,15 +38,3 @@ export const getContent = (token) => {
     })
     .then(res => handleResponse(res));
 };
-
-export const logout = (email) => {
-  return fetch(`${BASE_URL}/signout`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    body: JSON.stringify({ email })
-  })
-  .then(res => handleResponse(res));
-}

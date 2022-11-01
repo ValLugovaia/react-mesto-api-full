@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import api from '../utils/Api.js';
-import { register, authorize, getContent, logout } from '../utils/Auth.js';
+import { register, authorize, getContent } from '../utils/Auth.js';
 import Header from './Header.js';
 import Main from './Main.js';
 import Footer from './Footer.js';
@@ -63,16 +63,10 @@ function App() {
   }
 
   function onSignOut() {
-    return logout()
-        .then(() => {
-          localStorage.removeItem('token');
-          setEmail('');
-          setLoggedIn(false);
-          history.push("/sign-in");
-        })
-        .catch(err => {
-          console.log(err)
-        });
+    localStorage.removeItem('jwt');
+    setEmail('');
+    setLoggedIn(false);
+    history.push("/sign-in");
   }
 
   function tokenCheck() {
