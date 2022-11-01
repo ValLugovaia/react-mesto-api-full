@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import api from '../utils/Api.js';
-import { register, authorize } from '../utils/Auth.js';
-import * as auth from '../utils/Auth.js';
+import { register, authorize, getContent, logout } from '../utils/Auth.js';
 import Header from './Header.js';
 import Main from './Main.js';
 import Footer from './Footer.js';
@@ -30,34 +29,28 @@ function App() {
   const [userData, setUserData] = useState({ _id: '', email: '' });
   const [currentUser, setCurrentUser] = useState({});
 
-  function getUserInfo() {
-    api.getUserInfo()
-    .then(data => setCurrentUser(data))
-    .catch(err => console.log(err))
-  }
-
-  function getInitialCards() {
-    api.getInitialCards()
-    .then(cards => setCards(cards))
-    .catch(err => console.log(err))
-  }
-
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      getUserInfo();
-      getInitialCards();
+    if (loggedIn) {
+      Promise.all([api.getProfile(), api.getInitialCards()])
+        .then(([info, cards]) => {
+          setCurrentUser(info);
+          setCards(cards);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-  }, [])
+  }, [loggedIn]);
 
   useEffect(() => {
     tokenCheck();
-  }, [loggedIn]);
+  }, []);
 
   useEffect(() => {
     if (loggedIn) {
       history.push("/");
     }
-  }, [loggedIn]);
+  }, [loggedIn, history]);
 
   function handleCardLike(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -151,12 +144,14 @@ function App() {
 
   function onLogin(email, password) {
     return authorize(email, password)
-      .then((res) => {
-        console.log(res);
-        localStorage.setItem('token', res.token);
-        getUserInfo();
-        getInitialCards();
-      })
+    .then((res) => {
+      console.log(res);
+      if (res.email) {
+        localStorage.setItem("email", res.email);
+        tokenCheck();
+      }
+      tokenCheck();
+    })
       .catch(err => {
         console.log(err);
         setIsInfoTooltipPopup(true);
@@ -164,19 +159,23 @@ function App() {
   }
 
   function onSignOut() {
-    localStorage.removeItem("token");
-    setUserData({ _id: "", email: "" });
-    setLoggedIn(false);
-    history.push("/sign-in");
+    return logout()
+        .then(() => {
+          localStorage.removeItem("email");
+          setUserData('');
+          setLoggedIn(false);
+          history.push("/sign-in");
+        })
+        .catch(err => {
+          console.log(err)
+        });
   }
 
   function tokenCheck() {
-    if (localStorage.getItem('token')) {
-      const jwt = localStorage.getItem('token');
-      auth.getContent(jwt).then((res) => {
-          const { _id, email } = res.data;
-          console.log("res.data", res.data);
-          setUserData({ _id, email });
+    if (localStorage.getItem("email")) {
+      getContent()
+        .then((res) => {
+          setUserData(res.email);
           setLoggedIn(true);
         })
         .catch(err => {

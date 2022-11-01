@@ -27,7 +27,7 @@ export const authorize = (email, password) => {
     .then(res => handleResponse(res));
 };
 
-export const getContent = () => {
+export const getContent = (token) => {
     return fetch(`${BASE_URL}/users/me`, {
       method: 'GET',
       headers: {
@@ -37,3 +37,15 @@ export const getContent = () => {
     })
     .then(res => handleResponse(res));
 };
+
+export const logout = (email) => {
+  return fetch(`${BASE_URL}/signout`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({ email })
+  })
+  .then(res => handleResponse(res));
+}
