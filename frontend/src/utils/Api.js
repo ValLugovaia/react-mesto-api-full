@@ -4,6 +4,19 @@ class Api {
     this._headers = headers
   }
 
+  _getToken() {
+    return localStorage.getItem('jwt')
+}
+
+_injectToken(headers) {
+  if (!this._getToken()) {
+    return headers;
+  }
+  return {
+    ...headers, 'authorization': `Bearer ${this._getToken()}`
+  }
+}
+
   _handleResponse(res) {
     return (res.ok) ? (res.json()) : (Promise.reject(`Ошибка: ${res.status}`))
   }

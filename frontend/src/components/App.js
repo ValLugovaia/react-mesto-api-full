@@ -29,6 +29,67 @@ function App() {
   const [userData, setUserData] = useState({ _id: '', email: '' });
   const [currentUser, setCurrentUser] = useState({});
 
+  function onRegister(email, password) {
+    return register(email, password)
+      .then((res) => {
+        if (res.data._id) {
+          setIsSignup(true);
+          setIsInfoTooltipPopup(true);
+          history.push("/sign-in");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        setIsSignup(false);
+        setIsInfoTooltipPopup(true);
+      });
+  }
+
+  function onLogin(email, password) {
+    return authorize(email, password)
+    .then((res) => {
+      console.log(res);
+      if (res) {
+        localStorage.setItem('jwt', res.token);
+        setUserData(res.email);
+        setLoggedIn(true);
+        history.replace({ pathname: "/" });
+      }
+    })
+      .catch(err => {
+        console.log(err);
+        setIsInfoTooltipPopup(true);
+      });
+  }
+
+  function onSignOut() {
+    return logout()
+        .then(() => {
+          localStorage.removeItem('token');
+          setUserData('');
+          setLoggedIn(false);
+          history.push("/sign-in");
+        })
+        .catch(err => {
+          console.log(err)
+        });
+  }
+
+  function tokenCheck() {
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      getContent(token)
+        .then((res) => {
+          setUserData(res.email);
+          setLoggedIn(true);
+          history.push("/");
+        })
+        .catch(err => {
+          console.log(err)
+        });
+      }
+  }
+
   useEffect(() => {
     if (loggedIn) {
       Promise.all([api.getProfile(), api.getInitialCards()])
@@ -44,13 +105,7 @@ function App() {
 
   useEffect(() => {
     tokenCheck();
-  }, []);
-
-  useEffect(() => {
-    if (loggedIn) {
-      history.push("/");
-    }
-  }, [loggedIn, history]);
+  }, [history]);
 
   function handleCardLike(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -125,64 +180,6 @@ function App() {
     setIsInfoTooltipPopup(false)
     setSelectedCard(null);
   }
-
-  function onRegister(email, password) {
-    return register(email, password)
-      .then((res) => {
-        if (res.data._id) {
-          setIsSignup(true);
-          setIsInfoTooltipPopup(true);
-          history.push("/sign-in");
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        setIsSignup(false);
-        setIsInfoTooltipPopup(true);
-      });
-  }
-
-  function onLogin(email, password) {
-    return authorize(email, password)
-    .then((res) => {
-      console.log(res);
-      if (res.token) {
-        localStorage.setItem('token', res.token);
-        tokenCheck();
-      }
-      tokenCheck();
-    })
-      .catch(err => {
-        console.log(err);
-        setIsInfoTooltipPopup(true);
-      });
-  }
-
-  function onSignOut() {
-    return logout()
-        .then(() => {
-          localStorage.removeItem('token');
-          setUserData('');
-          setLoggedIn(false);
-          history.push("/sign-in");
-        })
-        .catch(err => {
-          console.log(err)
-        });
-  }
-
-  function tokenCheck() {
-    if (localStorage.getItem('token')) {
-      getContent()
-        .then((res) => {
-          setUserData(res.email);
-          setLoggedIn(true);
-        })
-        .catch(err => {
-          console.log(err)
-        });
-      }
-    }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
