@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
@@ -29,28 +30,35 @@ function App() {
   const [userData, setUserData] = useState({ _id: '', email: '' });
   const [currentUser, setCurrentUser] = useState({});
 
+  function getUserInfo() {
+    api.getUserInfo()
+    .then(data => setCurrentUser(data))
+    .catch(err => console.log(err))
+  }
+
+  function getInitialCards() {
+    api.getInitialCards()
+    .then(cards => setCards(cards))
+    .catch(err => console.log(err))
+  }
+
   useEffect(() => {
-    if (loggedIn) {  
-      Promise.all([api.getUserInfo(), api.getInitialCards()])
-        .then(([data, cards]) => {
-          setCurrentUser(data);
-          setCards(cards);
-        })
-        .catch(err => {
-          console.log(err)
-        });
+    const cookie = localStorage.getItem('hasCookie');
+    if (cookie) {
+      getUserInfo();
+      getInitialCards();
     }
-  }, [loggedIn]);
+  }, [])
 
   useEffect(() => {
     tokenCheck();
-  }, []);
+  }, [loggedIn]);
 
   useEffect(() => {
     if (loggedIn) {
       history.push("/");
     }
-  }, [loggedIn, history]);
+  }, [loggedIn]);
 
   function handleCardLike(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -144,13 +152,10 @@ function App() {
 
   function onLogin(email, password) {
     return authorize(email, password)
-      .then((res) => {
-        console.log(res);
-        if (res.token) {
-          localStorage.setItem('jwt', res.token);
-          setUserData({ email });
-          setLoggedIn(true);
-        }
+      .then(() => {
+        localStorage.setItem('hasCookie', true);
+        getUserInfo();
+        getInitialCards();
       })
       .catch(err => {
         console.log(err);
@@ -166,11 +171,14 @@ function App() {
   }
 
   function tokenCheck() {
-    const token = localStorage.getItem('jwt');
-    if (token) {
-      auth.getContent(token).then((res) => {
+    const cookie = localStorage.getItem('hasCookie');
+    if (cookie) {
+      auth.getContent()
+      .then(res => {
+        if (res) {
           setUserData(res.email);
           setLoggedIn(true);
+        }
         })
         .catch(err => {
           console.log(err)
