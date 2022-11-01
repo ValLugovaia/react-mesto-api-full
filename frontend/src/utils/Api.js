@@ -33,7 +33,8 @@ _injectToken(headers) {
   changeUserInfo({name, about}) {
     return fetch(`${this._baseUrl}/users/me`, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: this._injectToken(this._headers),
+      credentials: 'include',
       body: JSON.stringify({
         name,
         about
@@ -45,7 +46,8 @@ _injectToken(headers) {
   editAvatar(avatar) {
     return fetch(`${this._baseUrl}/users/me/avatar`, {
       method: "PATCH",
-      headers: this._headers,
+      headers: this._injectToken(this._headers),
+      credentials: 'include',
       body: JSON.stringify(avatar)
     })
     .then(this._handleResponse)
@@ -63,7 +65,8 @@ _injectToken(headers) {
   addCard(data) {
     return fetch(`${this._baseUrl}/cards`, {
       method: "POST",
-      headers: this._headers,
+      headers: this._injectToken(this._headers),
+      credentials: 'include',
       body: JSON.stringify(data)
     })
     .then(this._handleResponse)
@@ -72,7 +75,8 @@ _injectToken(headers) {
   deleteCard(id) {
     return fetch(`${this._baseUrl}/cards/${id}`, {
         method: "DELETE",
-        headers: this._headers,
+        headers: this._injectToken(this._headers),
+        credentials: 'include',
     })
     .then(this._handleResponse)
   }
@@ -80,7 +84,8 @@ _injectToken(headers) {
   changeLikeCardStatus(id, isLiked) {
     return fetch(`${this._baseUrl}/cards/${id}/likes`, {
         method: isLiked ? "PUT" : "DELETE",
-        headers: this._headers,
+        headers: this._injectToken(this._headers),
+        credentials: 'include',
     })
       .then(this._handleResponse)
   }
