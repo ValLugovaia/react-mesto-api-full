@@ -36,4 +36,3 @@ export const getContent = (token) => {
     })
     .then(res => handleResponse(res));
 };
-

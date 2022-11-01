@@ -166,15 +166,16 @@ function App() {
   }
 
   function tokenCheck() {
-  if (localStorage.getItem("token")) {
-    auth.getContent().then((res) => {
-        setUserData(res.token);
-        setLoggedIn(true);
-      })
-      .catch(err => {
-        console.log(err)
-      });
-    }
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      auth.getContent(token).then((res) => {
+          setUserData(res.email);
+          setLoggedIn(true);
+        })
+        .catch(err => {
+          console.log(err)
+        });
+      }
   }
 
   return (
