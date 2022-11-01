@@ -26,7 +26,7 @@ function App() {
   const [cards, setCards] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
-  const [userData, setUserData] = useState({ _id: '', email: '' });
+  const [email, setEmail] = useState('');
   const [currentUser, setCurrentUser] = useState({});
 
   function onRegister(email, password) {
@@ -51,7 +51,7 @@ function App() {
       console.log(res);
       if (res) {
         localStorage.setItem('jwt', res.token);
-        setUserData({ email });
+        setEmail(email);
         setLoggedIn(true);
         history.replace({ pathname: "/" });
       }
@@ -66,7 +66,7 @@ function App() {
     return logout()
         .then(() => {
           localStorage.removeItem('token');
-          setUserData('');
+          setEmail('');
           setLoggedIn(false);
           history.push("/sign-in");
         })
@@ -80,8 +80,7 @@ function App() {
     if (token) {
       getContent(token)
         .then((res) => {
-          const { _id, email } = res.data;
-          setUserData({ _id, email });
+          setEmail(res.email);
           setLoggedIn(true);
           history.push("/");
         })
@@ -186,7 +185,7 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="root">
-        <Header userEmail={userData.email} onSignOut={onSignOut} />
+        <Header userEmail={email} onSignOut={onSignOut} />
         <Switch>
           <ProtectedRoute exact path="/" loggedIn={loggedIn} component={Main} cards={cards} onEditAvatar={handleEditAvatarClick} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onCardClick={handleCardClick} onCardLike={handleCardLike} onCardDelete={handleCardDelete} />
           <Route path="/sign-up">
