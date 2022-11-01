@@ -43,8 +43,7 @@ function App() {
   }
 
   useEffect(() => {
-    const cookie = localStorage.getItem('hasCookie');
-    if (cookie) {
+    if (localStorage.getItem('token')) {
       getUserInfo();
       getInitialCards();
     }
@@ -152,8 +151,9 @@ function App() {
 
   function onLogin(email, password) {
     return authorize(email, password)
-      .then(() => {
-        localStorage.setItem('hasCookie', true);
+      .then((res) => {
+        console.log(res);
+        localStorage.setItem('token', res.token);
         getUserInfo();
         getInitialCards();
       })
@@ -171,20 +171,19 @@ function App() {
   }
 
   function tokenCheck() {
-    const cookie = localStorage.getItem('hasCookie');
-    if (cookie) {
-      auth.getContent()
-      .then(res => {
-        if (res) {
-          setUserData(res.email);
+    if (localStorage.getItem('token')) {
+      const jwt = localStorage.getItem('token');
+      auth.getContent(jwt).then((res) => {
+          const { _id, email } = res.data;
+          console.log("res.data", res.data);
+          setUserData({ _id, email });
           setLoggedIn(true);
-        }
         })
         .catch(err => {
           console.log(err)
         });
       }
-  }
+    }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
