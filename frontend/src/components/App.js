@@ -145,14 +145,12 @@ function App() {
   function onLogin(email, password) {
     return authorize(email, password)
       .then((res) => {
-        console.log(res.token);
-        if (res.token) {
-          localStorage.setItem('token', res.token);
+        console.log(res);
+        if (res) {
+          localStorage.setItem('jwt', res.token);
           setUserData({ email });
           setLoggedIn(true);
-          tokenCheck();
         }
-        tokenCheck();
       })
       .catch(err => {
         console.log(err);
