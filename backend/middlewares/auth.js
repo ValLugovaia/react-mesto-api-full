@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const jwt = require('jsonwebtoken');
 
 const Unauthorized = require('../utils/Unauthorized');
