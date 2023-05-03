@@ -92,7 +92,7 @@ _injectToken(headers) {
 }
 
 const api = new Api({
-  baseUrl: 'https://backend.vaal-project.nomoredomains.icu',
+  baseUrl: 'http://1474891-ct78522.tw1.ru',
   headers: {
     'Content-Type': 'application/json'
   }

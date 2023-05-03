@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://backend.vaal-project.nomoredomains.icu';
+export const BASE_URL = 'http://api.1474891-ct78522.tw1.ru';
 
 function handleResponse(res) {
   return (res.ok) ? (res.json()) : (Promise.reject(`Ошибка: ${res.status}`))

@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/VaalIT/express-mesto-gha.git"
+    "url": "git+https://github.com/ValLugovaia/react-mesto-api-full.git"
   },
   "author": "Valentina Lugovaya",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/VaalIT/express-mesto-gha/issues"
+    "url": "https://github.com/ValLugovaia/react-mesto-api-full/issues"
   },
-  "homepage": "https://github.com/VaalIT/express-mesto-gha#readme",
+  "homepage": "https://github.com/ValLugovaia/react-mesto-api-full#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
