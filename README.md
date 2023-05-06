@@ -23,8 +23,8 @@
 8. CSS
 
 ## Ссылки
-1. [Приложение](https://frontend.vaal-project.nomoredomains.icu)
-2. [API](https://backend.vaal-project.nomoredomains.icu)
+1. [Приложение](http://1474891-ct78522.tw1.ru)
+2. [API](http://api.1474891-ct78522.tw1.ru)
 3. [Макет в Figma](https://www.figma.com/file/2cn9N9jSkmxD84oJik7xL7/JavaScript.-Sprint-4?node-id=0%3A1)
 
 ## Инструкция по развёртыванию
